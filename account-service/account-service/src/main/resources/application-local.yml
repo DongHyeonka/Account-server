@@ -82,10 +82,10 @@ eventuate:
         auto-offset-reset: latest
         enable-auto-commit: true
       destinations:
-        paymentService:
-          destination: paymentService
+        accountService:
+          destination: accountService
           dlq:
-            destination: paymentService-dlq
+            destination: accountService-dlq
     kafka:
       message:
         serializer: io.eventuate.messaging.kafka.basic.consumer.DefaultKafkaMessageSerializer
