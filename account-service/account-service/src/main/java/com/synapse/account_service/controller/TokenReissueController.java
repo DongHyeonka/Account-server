@@ -15,13 +15,13 @@ import com.synapse.account_service_api.dto.response.TokenResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/accounts/token")
+@RequestMapping("/api/accounts")
 @RequiredArgsConstructor
 public class TokenReissueController {
     private final TokenManagementService tokenManagementService;
     private final AuthResponseWriter authResponseWriter;
 
-    @PostMapping("/reissue")
+    @PostMapping("/token/reissue")
     public ResponseEntity<?> reissue(@CookieValue(name = "refreshToken") String refreshToken) {
         TokenResponse newTokens = tokenManagementService.reissueTokens(refreshToken);
 
