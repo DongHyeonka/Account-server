@@ -53,11 +53,12 @@ public class TokenReissueIntegrationTest extends TestConfig {
                 .password("password")
                 .role(MemberRole.USER)
                 .provider("local")
+            .defaultWorkspaceId(UUID.randomUUID())
                 .build();
         testMember = memberRepository.save(testMember);
 
         // 테스트용 유효한 리프레시 토큰 생성 및 Redis에 저장
-        TokenResponse tokens = jwtTokenService.createTokenResponse(testMember.getId().toString(), "USER");
+        TokenResponse tokens = jwtTokenService.createTokenResponse(testMember.getId());
         validRefreshToken = tokens.refreshToken().token();
         tokenManagementService.saveOrUpdateRefreshToken(testMember.getId(), tokens.refreshToken());
     }

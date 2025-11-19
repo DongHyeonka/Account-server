@@ -45,6 +45,9 @@ class MemberRegistrationServiceTest {
     @Mock
     private SubscriptionDomainEventPublisher subscriptionDomainEventPublisher;
 
+    @Mock
+    private DefaultWorkspaceService defaultWorkspaceService;
+
     private final String provider = "google";
     private final String providerId = "123456789";
     private final String email = "test@example.com";
@@ -65,7 +68,15 @@ class MemberRegistrationServiceTest {
                 .willReturn(Optional.empty());
 
         // registerOauthUser 내부에서 save가 호출될 때 반환할 Member 객체를 준비
-        Member savedMember = Member.builder().id(UUID.randomUUID()).email(email).username(username).provider(provider).registrationId(providerId).build();
+        Member savedMember = Member.builder()
+            .id(UUID.randomUUID())
+            .email(email)
+            .username(username)
+            .provider(provider)
+            .registrationId(providerId)
+            .defaultWorkspaceId(UUID.randomUUID())
+            .build();
+        given(defaultWorkspaceService.createDefaultWorkspaceId(any(UUID.class))).willAnswer(invocation -> invocation.getArgument(0));
         given(memberRepository.save(any(Member.class))).willReturn(savedMember);
 
         // when

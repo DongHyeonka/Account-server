@@ -10,6 +10,7 @@ import static org.mockito.Mockito.times;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -84,7 +85,11 @@ public class CustomOAuth2UserServiceTest extends TestConfig {
         
         ProviderUser mockProviderUser = new GoogleUser(new Attributes(attributes), mockOAuth2User, clientRegistration);
         
-        Member mockMember = Member.builder().email(userEmail).username(username).build();
+        Member mockMember = Member.builder()
+            .email(userEmail)
+            .username(username)
+            .defaultWorkspaceId(UUID.randomUUID())
+            .build();
 
         given(oAuth2UserService.loadUser(any(OAuth2UserRequest.class))).willReturn(mockOAuth2User);
         given(providerUserConverter.convert(any(ProviderUserRequest.class))).willReturn(mockProviderUser);

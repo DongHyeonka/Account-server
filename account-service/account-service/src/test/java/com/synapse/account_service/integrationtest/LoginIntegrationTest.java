@@ -23,6 +23,7 @@ import com.synapse.account_service.TestConfig;
 import com.synapse.account_service.domain.entity.Member;
 import com.synapse.account_service.domain.enums.MemberRole;
 import com.synapse.account_service.domain.repository.MemberRepository;
+import com.synapse.account_service.exception.ExceptionType;
 import com.synapse.account_service_api.dto.request.LoginRequest;
 
 public class LoginIntegrationTest extends TestConfig{
@@ -52,6 +53,7 @@ public class LoginIntegrationTest extends TestConfig{
                 .password(passwordEncoder.encode(TEST_PASSWORD))
                 .role(MemberRole.USER)
                 .provider("local")
+                .defaultWorkspaceId(UUID.randomUUID())
                 .build();
         testMember = memberRepository.save(testMember);
     }
@@ -94,7 +96,7 @@ public class LoginIntegrationTest extends TestConfig{
         actions
                 .andDo(print())
                 .andExpect(status().isUnauthorized()) // 401 Unauthorized 상태 코드 확인
-                .andExpect(jsonPath("$.code").value("007")); // LoginFailureHandler에서 정의한 에러 코드 확인
+                .andExpect(jsonPath("$.code").value(ExceptionType.FAIL_LOGIN.getCode())); // LoginFailureHandler에서 정의한 에러 코드 확인
     }
 
     @Test
@@ -113,6 +115,6 @@ public class LoginIntegrationTest extends TestConfig{
         actions
                 .andDo(print())
                 .andExpect(status().isUnauthorized()) // 401 Unauthorized 상태 코드 확인
-                .andExpect(jsonPath("$.code").value("007"));
+                .andExpect(jsonPath("$.code").value(ExceptionType.FAIL_LOGIN.getCode()));
     }
 }

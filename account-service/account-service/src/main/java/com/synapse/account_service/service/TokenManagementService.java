@@ -11,11 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.synapse.account_service.domain.RefreshToken;
-import com.synapse.account_service.domain.entity.Member;
-import com.synapse.account_service.domain.repository.MemberRepository;
 import com.synapse.account_service.exception.ExceptionType;
 import com.synapse.account_service.exception.JWTValidationException;
-import com.synapse.account_service.exception.NotFoundException;
 import com.synapse.account_service_api.dto.TokenResult;
 import com.synapse.account_service_api.dto.response.TokenResponse;
 
@@ -26,7 +23,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class TokenManagementService {
     private final JwtTokenService jwtTokenService;
-    private final MemberRepository memberRepository;
     private final RedisTemplate<String, RefreshToken> refreshTokenRedisTemplate;
 
     public void saveOrUpdateRefreshToken(UUID memberId, TokenResult refreshToken) {
@@ -38,7 +34,7 @@ public class TokenManagementService {
     }
 
     public TokenResponse reissueTokens(String requestRefreshToken) {
-        UUID memberId = jwtTokenService.getMemberIdFrom(requestRefreshToken);
+        UUID memberId = jwtTokenService.getMemberIdFromRefreshToken(requestRefreshToken);
         String redisKey = "refresh_token:" + memberId.toString();
 
         RefreshToken storedToken = refreshTokenRedisTemplate.opsForValue().get(redisKey);
@@ -51,12 +47,7 @@ public class TokenManagementService {
             throw new JWTValidationException(ExceptionType.TAMPERED_REFRESH_TOKEN);
         }
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException(ExceptionType.NOT_FOUND_MEMBER));
-        
-        String role = member.getRole().name();
-
-        TokenResponse newTokens = jwtTokenService.createTokenResponse(memberId.toString(), role);
+        TokenResponse newTokens = jwtTokenService.createTokenResponse(memberId);
 
         // Redis에 새로운 RefreshToken 저장
         RefreshToken newRefreshToken = new RefreshToken(memberId, newTokens.refreshToken().token());

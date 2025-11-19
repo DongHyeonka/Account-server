@@ -5,9 +5,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.synapse.account_service.config.RedisTemplateStubConfig;
+
 @Transactional
 @ActiveProfiles("test")
-@SpringBootTest(classes = AccountServiceConfig.class)
+@SpringBootTest(classes = {AccountServiceConfig.class, RedisTemplateStubConfig.class})
 @AutoConfigureMockMvc
 public class TestConfig {
     

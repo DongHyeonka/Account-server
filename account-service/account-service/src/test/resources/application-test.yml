@@ -49,16 +49,15 @@ spring:
         show-sql: true
 
 # JWT 테스트 설정
-jwt:
-  access:
-    expiration:
-      minutes: 1  # 테스트용 짧은 만료 시간 (1분)
-  refresh:
-    expiration:
-      minutes: 5  # 테스트용 짧은 만료 시간 (5분)
-
-secret:
-  key: testSecretKeyForJWTTokenGenerationInTestEnvironment2024
+synapse:
+    jwt:
+        issuer: synapse-account
+        audience:
+            access: synapse-gateway
+            refresh: synapse-account
+        secret: testSecretKeyForJWTTokenGenerationInTestEnvironment2024
+        access-token-ttl-minutes: 1  # 테스트용 짧은 만료 시간 (1분)
+        refresh-token-ttl-days: 1  # 테스트용 짧은 만료 시간 (1일)
 
 # Kafka 테스트 설정
 eventuatelocal:

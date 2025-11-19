@@ -60,7 +60,7 @@ public class Subscription extends BaseTimeEntity {
         SubscriptionCreatedEvent subscriptionEvent = new SubscriptionCreatedEvent(
             subscription.getId(), 
             userId, 
-            tier.name(), 
+            tier.getGatewayValue(), 
             tier.getMaxSubscriptionCount(),
             nextRenewalDate.format(FORMATTING_PATTERN)
         );

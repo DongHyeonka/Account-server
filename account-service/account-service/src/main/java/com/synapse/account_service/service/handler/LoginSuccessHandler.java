@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -31,17 +30,15 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
             Authentication authentication) throws IOException, ServletException {
         PrincipalUser principalUser = (PrincipalUser) authentication.getPrincipal();
+        if (principalUser.member() == null) {
+            throw new InternalAuthenticationServiceException("회원 정보를 찾을 수 없습니다.");
+        }
 
-        String memberId = principalUser.providerUser() == null ? principalUser.member().getId().toString() : principalUser.providerUser().getId();
-
-        String role = authentication.getAuthorities().stream()
-                .findFirst()
-                .map(GrantedAuthority::getAuthority)
-                .orElseThrow(() -> new InternalAuthenticationServiceException("사용자에게 권한이 설정되어 있지 않습니다."));
+        UUID memberId = principalUser.member().getId();
         
-        TokenResponse tokenResponse = jwtTokenService.createTokenResponse(memberId, role);
+        TokenResponse tokenResponse = jwtTokenService.createTokenResponse(memberId);
 
-        tokenManagementService.saveOrUpdateRefreshToken(UUID.fromString(memberId), tokenResponse.refreshToken());
+        tokenManagementService.saveOrUpdateRefreshToken(memberId, tokenResponse.refreshToken());
 
         authResponseWriter.writeSuccessResponse(response, tokenResponse);
     }

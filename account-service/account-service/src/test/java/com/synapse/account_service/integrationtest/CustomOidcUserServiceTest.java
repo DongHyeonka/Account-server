@@ -9,6 +9,7 @@ import static org.mockito.Mockito.times;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -81,7 +82,11 @@ public class CustomOidcUserServiceTest extends TestConfig {
 
         ProviderUser mockProviderUser = new KakaoOidcUser(new Attributes(claims), mockOidcUser, clientRegistration);
 
-        Member mockMember = Member.builder().email(userEmail).username(username).build();
+        Member mockMember = Member.builder()
+            .email(userEmail)
+            .username(username)
+            .defaultWorkspaceId(UUID.randomUUID())
+            .build();
 
         given(oidcUserService.loadUser(any(OidcUserRequest.class))).willReturn(mockOidcUser);
         given(providerUserConverter.convert(any(ProviderUserRequest.class))).willReturn(mockProviderUser);

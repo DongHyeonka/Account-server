@@ -55,6 +55,7 @@ class CustomUserDetailsServiceTest extends TestConfig {
                 .email(email)
                 .password("password")
                 .role(MemberRole.USER)
+            .defaultWorkspaceId(UUID.randomUUID())
                 .build();
         
         ProviderUser mockProviderUser = FormUser.builder()

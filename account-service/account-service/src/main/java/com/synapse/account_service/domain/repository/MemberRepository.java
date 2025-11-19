@@ -14,6 +14,9 @@ public interface MemberRepository extends JpaRepository<Member, UUID> {
     Optional<Member> findByUsername(String username);
     Optional<Member> findByProviderAndRegistrationId(String provider, String registrationId);
 
+    @Query("SELECT m FROM Member m LEFT JOIN FETCH m.subscription WHERE m.id = :memberId")
+    Optional<Member> findByIdWithSubscription(@Param("memberId") UUID memberId);
+
     @Query("SELECT m FROM Member m WHERE m.username = :username AND m.email = :email")
     Optional<Member> findByUsernameAndEmail(@Param("username") String username, @Param("email") String email);
 

@@ -39,6 +39,7 @@ public class MemberRepositoryTest extends TestConfig {
                 .username("테스트유저")
                 .role(MemberRole.USER)
                 .provider("local")
+            .defaultWorkspaceId(UUID.randomUUID())
                 .build();
     }
 
@@ -71,6 +72,7 @@ public class MemberRepositoryTest extends TestConfig {
                 .password("another_password")
                 .role(MemberRole.USER)
                 .provider("local")
+            .defaultWorkspaceId(UUID.randomUUID())
                 .build();
 
         // then: 이 회원을 저장하려고 할 때, DB의 unique 제약 조건에 걸려 예외가 발생하는지 확인합니다.
@@ -114,6 +116,7 @@ public class MemberRepositoryTest extends TestConfig {
                 .role(MemberRole.USER)
                 .provider("google") // 소셜 로그인 제공자
                 .registrationId("1234567890") // 제공자가 부여한 고유 ID
+            .defaultWorkspaceId(UUID.randomUUID())
                 .build();
         memberRepository.save(oauthMember);
 

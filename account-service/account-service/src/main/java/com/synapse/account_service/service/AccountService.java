@@ -38,6 +38,7 @@ public class AccountService {
 
     private final MemberDomainEventPublisher memberDomainEventPublisher;
     private final SubscriptionDomainEventPublisher subscriptionDomainEventPublisher;
+    private final DefaultWorkspaceService defaultWorkspaceService;
 
 
     @Transactional
@@ -49,8 +50,11 @@ public class AccountService {
             throw new DuplicatedException(ExceptionType.DUPLICATED_USERNAME_AND_EMAIL);
         });
 
+        UUID memberId = UUID.randomUUID();
+        UUID defaultWorkspaceId = defaultWorkspaceService.createDefaultWorkspaceId(memberId);
+
         ResultWithDomainEvents<Member, MemberDomainEvent> memberAndEvents = Member.register(
-            UUID.randomUUID(),
+            memberId,
             request.email(),
             request.username(),
             encodedPassword,
@@ -59,6 +63,7 @@ public class AccountService {
         );
 
         Member memberResult = memberAndEvents.result;
+        memberResult.assignDefaultWorkspace(defaultWorkspaceId);
 
         memberRepository.save(memberResult);
 
@@ -69,7 +74,7 @@ public class AccountService {
             memberResult.getId(), 
             memberResult.getEmail(),
             memberResult.getUsername(),
-            memberResult.getRole().name()
+            memberResult.getRole().getGatewayValue()
         );
     }
 

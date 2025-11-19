@@ -30,6 +30,7 @@ public class MemberRegistrationService {
     private final MemberRepository memberRepository;
     private final MemberDomainEventPublisher memberDomainEventPublisher;
     private final SubscriptionDomainEventPublisher subscriptionDomainEventPublisher;
+    private final DefaultWorkspaceService defaultWorkspaceService;
 
     @Transactional
     public Member registerOauthUser(String provider, ProviderUser providerUser) {
@@ -45,8 +46,11 @@ public class MemberRegistrationService {
             return existingMember;
         }
 
+        UUID memberId = UUID.randomUUID();
+        UUID defaultWorkspaceId = defaultWorkspaceService.createDefaultWorkspaceId(memberId);
+
         ResultWithDomainEvents<Member, MemberDomainEvent> memberAndEvents = Member.register(
-            UUID.randomUUID(),
+            memberId,
             providerUser.getEmail(),
             providerUser.getUsername(),
             providerUser.getPassword(),
@@ -55,6 +59,7 @@ public class MemberRegistrationService {
         );
 
         Member memberResult = memberAndEvents.result;
+        memberResult.assignDefaultWorkspace(defaultWorkspaceId);
 
         memberRepository.save(memberResult);
 

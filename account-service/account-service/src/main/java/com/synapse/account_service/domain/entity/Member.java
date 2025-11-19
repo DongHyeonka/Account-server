@@ -47,11 +47,15 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private MemberRole role = MemberRole.USER;
 
+    @Column(name = "default_workspace_id", columnDefinition = "uuid", nullable = false)
+    private UUID defaultWorkspaceId;
+
     @OneToOne(mappedBy = "member", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Subscription subscription;
 
     @Builder
-    public Member(UUID id, String username, String password, String email, String provider, String picture, String registrationId, MemberRole role) {
+    public Member(UUID id, String username, String password, String email, String provider, String picture,
+                  String registrationId, MemberRole role, UUID defaultWorkspaceId) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -60,6 +64,7 @@ public class Member extends BaseEntity {
         this.picture = picture;
         this.registrationId = registrationId;
         this.role = role;
+        this.defaultWorkspaceId = defaultWorkspaceId;
     }
 
     public static ResultWithDomainEvents<Member, MemberDomainEvent> register(
@@ -88,6 +93,7 @@ public class Member extends BaseEntity {
                 .provider(provider)
                 .registrationId(registrationId)
                 .role(MemberRole.USER)
+                .defaultWorkspaceId(userId)
                 .build();
         
         SocialAccountLinkedEvent socialEvent = new SocialAccountLinkedEvent(userId, provider, registrationId);
@@ -109,5 +115,9 @@ public class Member extends BaseEntity {
     public void linkSocialAccount(String provider, String registrationId) {
         this.provider = provider;
         this.registrationId = registrationId;
+    }
+
+    public void assignDefaultWorkspace(UUID workspaceId) {
+        this.defaultWorkspaceId = workspaceId;
     }
 }

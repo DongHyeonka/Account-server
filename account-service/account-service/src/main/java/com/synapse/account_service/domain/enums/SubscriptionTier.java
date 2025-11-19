@@ -7,41 +7,35 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum SubscriptionTier {
-    FREE("FREE", 0, 3),
-    PRO("PRO", 0, 100)
+    FREE("free", 3),
+    PRO("pro", 100)
     ;
 
-    private final String SubscriptionTierName;
-    private final int currentSubscriptionCount;
+    private final String gatewayValue;
     private final int maxSubscriptionCount;
 
-    private SubscriptionTier(String SubscriptionTierName, int currentSubscriptionCount, int maxSubscriptionCount) {
-        this.SubscriptionTierName = SubscriptionTierName;
-        this.currentSubscriptionCount = currentSubscriptionCount;
+    SubscriptionTier(String gatewayValue, int maxSubscriptionCount) {
+        this.gatewayValue = gatewayValue;
         this.maxSubscriptionCount = maxSubscriptionCount;
     }
 
-    public String getSubscriptionTierName() {
-        return SubscriptionTierName;
-    }
-
-    public int getCurrentSubscriptionCount() {
-        return currentSubscriptionCount;
+    public String getGatewayValue() {
+        return gatewayValue;
     }
 
     public int getMaxSubscriptionCount() {
         return maxSubscriptionCount;
     }
 
-    public static final Map<String, SubscriptionTier> TIER_MAP = Collections.unmodifiableMap(
+    private static final Map<String, SubscriptionTier> TIER_MAP = Collections.unmodifiableMap(
         Stream.of(values())
-            .collect(Collectors.toMap(SubscriptionTier::getSubscriptionTierName, Function.identity()))
+            .collect(Collectors.toMap(SubscriptionTier::getGatewayValue, Function.identity()))
     );
 
-    public static SubscriptionTier fromTier(String tierName) {
-        SubscriptionTier result = TIER_MAP.get(tierName);
+    public static SubscriptionTier fromGatewayValue(String tierValue) {
+        SubscriptionTier result = TIER_MAP.get(tierValue);
         if(result == null) {
-            throw new IllegalArgumentException("일치하는 티어 타입이 없습니다." + tierName);
+            throw new IllegalArgumentException("일치하는 티어 타입이 없습니다. value=" + tierValue);
         }
         return result;
     }
