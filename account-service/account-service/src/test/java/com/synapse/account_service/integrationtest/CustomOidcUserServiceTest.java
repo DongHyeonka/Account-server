@@ -72,21 +72,22 @@ public class CustomOidcUserServiceTest extends TestConfig {
                 .authorizationUri("uri")
                 .userInfoUri("uri")
                 .build();
-        
+
         Map<String, Object> claims = Map.of("sub", providerId, "nickname", username, "email", userEmail);
         OidcIdToken idToken = new OidcIdToken("test-token", Instant.now(), Instant.now().plusSeconds(60), claims);
-        OAuth2AccessToken accessToken = new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER, "test-token", Instant.now(), Instant.now().plusSeconds(60));
+        OAuth2AccessToken accessToken = new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER, "test-token",
+                Instant.now(), Instant.now().plusSeconds(60));
         OidcUserRequest userRequest = new OidcUserRequest(clientRegistration, accessToken, idToken);
-        
+
         OidcUser mockOidcUser = new DefaultOidcUser(Collections.emptyList(), idToken, "sub");
 
         ProviderUser mockProviderUser = new KakaoOidcUser(new Attributes(claims), mockOidcUser, clientRegistration);
 
         Member mockMember = Member.builder()
-            .email(userEmail)
-            .username(username)
-            .defaultWorkspaceId(UUID.randomUUID())
-            .build();
+                .email(userEmail)
+                .username(username)
+                .defaultWorkspaceId(UUID.randomUUID())
+                .build();
 
         given(oidcUserService.loadUser(any(OidcUserRequest.class))).willReturn(mockOidcUser);
         given(providerUserConverter.convert(any(ProviderUserRequest.class))).willReturn(mockProviderUser);
@@ -103,5 +104,11 @@ public class CustomOidcUserServiceTest extends TestConfig {
         assertThat(result).isInstanceOf(PrincipalUser.class);
         assertThat(((PrincipalUser) result).getUsername()).isEqualTo(username);
         assertThat(((PrincipalUser) result).providerUser().getUsername()).isEqualTo(username);
+
+        // Verify OIDC methods
+        assertThat(result.getClaims()).containsEntry("sub", providerId);
+        assertThat(result.getUserInfo()).isNotNull();
+        assertThat(result.getUserInfo().getClaims()).containsEntry("sub", providerId);
+        assertThat(result.getIdToken()).isNull();
     }
-} 
+}

@@ -28,7 +28,7 @@ public class TokenManagementService {
     public void saveOrUpdateRefreshToken(UUID memberId, TokenResult refreshToken) {
         String redisKey = "refresh_token:" + memberId.toString();
         RefreshToken refreshTokenEntity = new RefreshToken(memberId, refreshToken.token());
-        
+
         long ttlSeconds = ChronoUnit.SECONDS.between(Instant.now(), refreshToken.expiresAt());
         refreshTokenRedisTemplate.opsForValue().set(redisKey, refreshTokenEntity, ttlSeconds, TimeUnit.SECONDS);
     }
@@ -55,5 +55,11 @@ public class TokenManagementService {
         refreshTokenRedisTemplate.opsForValue().set(redisKey, newRefreshToken, ttlSeconds, TimeUnit.SECONDS);
 
         return newTokens;
+    }
+
+    public void logout(String refreshToken) {
+        UUID memberId = jwtTokenService.getMemberIdFromRefreshToken(refreshToken);
+        String redisKey = "refresh_token:" + memberId.toString();
+        refreshTokenRedisTemplate.delete(redisKey);
     }
 }

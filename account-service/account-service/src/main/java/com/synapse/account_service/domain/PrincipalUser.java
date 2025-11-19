@@ -1,6 +1,7 @@
 package com.synapse.account_service.domain;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -16,7 +17,7 @@ public record PrincipalUser(ProviderUser providerUser, Member member) implements
     public PrincipalUser(ProviderUser providerUser) {
         this(providerUser, null);
     }
-    
+
     @Override
     public String getName() {
         return providerUser != null ? providerUser.getUsername() : member.getUsername();
@@ -64,16 +65,20 @@ public record PrincipalUser(ProviderUser providerUser, Member member) implements
 
     @Override
     public Map<String, Object> getClaims() {
-        return null;
+        return providerUser != null ? providerUser.getAttributes() : Collections.emptyMap();
     }
 
     @Override
     public OidcUserInfo getUserInfo() {
+        if (providerUser != null) {
+            return new OidcUserInfo(getClaims());
+        }
         return null;
     }
 
     @Override
     public OidcIdToken getIdToken() {
+        // OIDC id_token is not currently used/stored in PrincipalUser
         return null;
     }
 }

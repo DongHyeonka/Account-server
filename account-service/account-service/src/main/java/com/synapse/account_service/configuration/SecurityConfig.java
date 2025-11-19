@@ -29,7 +29,7 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    
+
     private final CustomUserDetailsService customUserDetailsService;
     private final LoginSuccessHandler loginSuccessHandler;
     private final LoginFailureHandler loginFailureHandler;
@@ -38,35 +38,33 @@ public class SecurityConfig {
     private final CustomOidcUserService customOidcUserService;
     private final PasswordEncoder passwordEncoder;
 
-
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter)
+            throws Exception {
         http.csrf(csrf -> csrf.disable())
-            .formLogin(form -> form.disable())
-            .httpBasic(basic -> basic.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-            .oauth2Login(oauth2 -> oauth2
-                .userInfoEndpoint(userInfo -> userInfo
-                    .userService(customOAuth2UserService)
-                    .oidcUserService(customOidcUserService)
-                )
-                .successHandler(loginSuccessHandler)
-                .failureHandler(loginFailureHandler)
-            )
+                .oauth2Login(oauth2 -> oauth2
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)
+                                .oidcUserService(customOidcUserService))
+                        .successHandler(loginSuccessHandler)
+                        .failureHandler(loginFailureHandler))
 
-            .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/api/accounts/signup", "/api/accounts/login", "/",
-                            "/api/accounts/token/reissue",
-                            "/actuator/health", "/actuator/info", 
-                            "/actuator/prometheus", "/actuator/metrics", "/actuator/mappings")
-                    .permitAll()
-                    .anyRequest().authenticated())
-            .addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/api/accounts/signup", "/api/accounts/login", "/api/accounts/logout", "/",
+                                "/api/accounts/token/reissue",
+                                "/actuator/health", "/actuator/info",
+                                "/actuator/prometheus", "/actuator/metrics", "/actuator/mappings")
+                        .permitAll()
+                        .anyRequest().authenticated())
+                .addFilterAt(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 
-            .exceptionHandling(
-                exceptionHandlingConfigurer -> exceptionHandlingConfigurer.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
-            );
+                .exceptionHandling(
+                        exceptionHandlingConfigurer -> exceptionHandlingConfigurer
+                                .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login")));
 
         return http.build();
     }
@@ -91,7 +89,7 @@ public class SecurityConfig {
         filter.setFilterProcessesUrl("/api/accounts/login");
         filter.setAuthenticationSuccessHandler(loginSuccessHandler);
         filter.setAuthenticationFailureHandler(loginFailureHandler);
-        
+
         return filter;
     }
 
