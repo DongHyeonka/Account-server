@@ -3,7 +3,7 @@ plugins {
 	id 'maven-publish'
 }
 
-group = 'com.github.DongHyeonKa'
+group = 'com.github.DongHyeonka'
 version = project.hasProperty('version') ? project.property('version') : '1.0.0-SNAPSHOT'
 
 repositories {
@@ -39,7 +39,7 @@ publishing {
 	repositories {
         maven {
             name = "GithubPackages"
-            url = "https://maven.pkg.github.com/DongHyeonKa/Account-server"
+            url = "https://maven.pkg.github.com/DongHyeonka/Account-server"
             credentials {
                 username = providers.gradleProperty("GITHUB_USERNAME").getOrNull()
                 password = providers.gradleProperty("GITHUB_ACCOUNT_TOKEN").getOrNull()
