@@ -41,7 +41,7 @@ jobs:
       
       - name: Gradle로 GitHub Packages에 배포
         working-directory: account-service
-        run: ./gradlew publish -Pversion=${{ env.VERSION_TAG }}
+        run: ./gradlew publish -Pversion=${{ env.VERSION_TAG }} -PGITHUB_USERNAME=${{ github.actor }} -PGITHUB_PAYMENT_TOKEN=${{ secrets.GITHUB_TOKEN }} 
         env:
           GITHUB_ACTOR: ${{ github.actor }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

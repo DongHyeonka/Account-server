@@ -41,8 +41,8 @@ publishing {
             name = "GithubPackages"
             url = "https://maven.pkg.github.com/DongHyeonKa/Account-server"
             credentials {
-                username = providers.gradleProperty("GITHUB_USERNAME").getOrNull() ?: System.getenv("GITHUB_USERNAME")
-                password = providers.gradleProperty("GITHUB_ACCOUNT_TOKEN").getOrNull() ?: System.getenv("GITHUB_TOKEN")
+                username = providers.gradleProperty("GITHUB_USERNAME").getOrNull()
+                password = providers.gradleProperty("GITHUB_ACCOUNT_TOKEN").getOrNull()
             }
         }
     }
