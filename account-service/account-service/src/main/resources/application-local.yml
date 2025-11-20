@@ -104,3 +104,10 @@ logging:
       hibernate:
         type: info
         level: info
+
+cookie:
+  secure: false
+  same-site: Lax
+  http-only: true
+  path: /
+

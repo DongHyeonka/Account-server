@@ -77,6 +77,12 @@ logging:
             orm:
                 jdbc:
                     bind: info
-        spring:
             transaction:
                 interceptor: info
+
+cookie:
+  secure: false
+  same-site: Lax
+  http-only: true
+  path: /
+

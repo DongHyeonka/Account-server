@@ -22,18 +22,20 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthResponseWriter {
     private final ObjectMapper objectMapper;
+    private final com.synapse.account_service.config.CookieProperties cookieProperties;
 
     public RefreshTokenResponse writeSuccessResponse(TokenResponse tokenResponse) {
         AccessTokenResponse accessTokenResponse = AccessTokenResponse.from(tokenResponse.accessToken());
         long maxAge = Duration.between(Instant.now(), tokenResponse.refreshToken().expiresAt()).getSeconds();
         ResponseCookie cookie = ResponseCookie.from("refreshToken", tokenResponse.refreshToken().token())
                 .maxAge(maxAge)
-                .path("/")
-                .httpOnly(true)
-                .secure(false)
-                .sameSite("None")
+                .path(cookieProperties.getPath())
+                .httpOnly(cookieProperties.isHttpOnly())
+                .secure(cookieProperties.isSecure())
+                .sameSite(cookieProperties.getSameSite())
+                .domain(cookieProperties.getDomain())
                 .build();
-        
+
         return new RefreshTokenResponse(cookie, accessTokenResponse);
     }
 
@@ -41,12 +43,13 @@ public class AuthResponseWriter {
         long maxAge = Duration.between(Instant.now(), tokenResponse.refreshToken().expiresAt()).getSeconds();
         ResponseCookie cookie = ResponseCookie.from("refreshToken", tokenResponse.refreshToken().token())
                 .maxAge(maxAge)
-                .path("/")
-                .httpOnly(true)
-                .secure(false)
-                .sameSite("None")
+                .path(cookieProperties.getPath())
+                .httpOnly(cookieProperties.isHttpOnly())
+                .secure(cookieProperties.isSecure())
+                .sameSite(cookieProperties.getSameSite())
+                .domain(cookieProperties.getDomain())
                 .build();
-                
+
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
         AccessTokenResponse responseBody = AccessTokenResponse.from(tokenResponse.accessToken());

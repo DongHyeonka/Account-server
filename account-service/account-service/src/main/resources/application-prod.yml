@@ -1,0 +1,5 @@
+cookie:
+  secure: true
+  same-site: None
+  http-only: true
+  path: /
