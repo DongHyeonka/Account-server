@@ -73,6 +73,8 @@ public class JwtTokenService {
             throw new JWTTokenExpiredException(ExceptionType.EXPIRED_TOKEN);
         } catch (JWTVerificationException e) {
             throw new JWTValidationException(invalidTokenType);
+        } catch (IllegalArgumentException e) {
+            throw new JWTValidationException(invalidTokenType);
         }
     }
 

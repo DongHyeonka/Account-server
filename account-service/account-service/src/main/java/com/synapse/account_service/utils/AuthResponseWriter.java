@@ -11,6 +11,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.synapse.account_service.config.CookieProperties;
 import com.synapse.account_service_api.dto.response.AccessTokenResponse;
 import com.synapse.account_service_api.dto.response.RefreshTokenResponse;
 import com.synapse.account_service_api.dto.response.TokenResponse;
@@ -22,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthResponseWriter {
     private final ObjectMapper objectMapper;
-    private final com.synapse.account_service.config.CookieProperties cookieProperties;
+    private final CookieProperties cookieProperties;
 
     public RefreshTokenResponse writeSuccessResponse(TokenResponse tokenResponse) {
         AccessTokenResponse accessTokenResponse = AccessTokenResponse.from(tokenResponse.accessToken());
